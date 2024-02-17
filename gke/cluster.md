@@ -1,8 +1,8 @@
 # Операції з кластером у GKE
 ## Створення кластеру
 ```sh
-export my_zone=ZONE
-export my_cluster=NAME
+export my_zone=ZONE #example us-east4-c
+export my_cluster=NAME #example my-cluster
 ```
 ```sh
 gcloud container clusters create $my_cluster --num-nodes 3 --zone $my_zone --enable-ip-alias
