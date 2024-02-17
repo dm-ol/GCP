@@ -22,3 +22,16 @@ nano ~/.kube/config
 ```sh
 kubectl config view
 ```
+## Cluster autoscaling
+```sh
+gcloud container clusters create  [CLUSTER NAME] --enable-autoscaling --min-nodes 5 --max-nodes 20 --zone [COMPUTE ZONE] --project [PROJECT ID]
+```
+```sh
+gcloud container clusters update  [CLUSTER NAME] --enable-autoscaling --min-nodes 5 --max-nodes 20 --zone [COMPUTE ZONE] --node-pool [POOL NAME] --project [PROJECT ID]
+```
+```sh
+gcloud container node-pools create  [CLUSTER NAME] --enable-autoscaling --min-nodes 15 --max-nodes 50 --zone [COMPUTE ZONE] --node-pool [POOL NAME] --project [PROJECT ID]
+```
+```sh
+gcloud container node-pools update  [CLUSTER NAME] --enable-autoscaling --min-nodes 15 --max-nodes 50 --zone [COMPUTE ZONE] --node-pool [POOL NAME] --project [PROJECT ID]
+```
