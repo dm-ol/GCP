@@ -16,6 +16,8 @@ spec:
       - key: "nodetype"
         operator: Equal
         value: "preemptible"
+      nodeSelector:
+        temp: "true"
       containers:
       - image: gcr.io/google-samples/hello-app:1.0
         name: web
