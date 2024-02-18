@@ -30,3 +30,23 @@ spec:
         ports:  # порти контейнеру
        —containerPort: 80
 ```
+## Приклад маніфесту сервісу:
+```yaml
+apiVersion: v1  # версія API Kubernetes
+kind: Service  # тип обє'кту
+metadata:
+  name: my-service  # назва об'єкту
+spec:
+  type: NodePort  # тип сервісу
+  selector:
+    app.kubernetes.io/name: MyApp
+  ports:  # порти сервісу (мультипорт в нашому випадку)
+    - name: http
+      protocol: TCP  # протокол
+      port: 80   # зовнішній порт
+      targetPort: 9376  # внутріщній порт
+    - name: https
+      protocol: TCP   # протокол
+      port: 443   # зовнішній порт
+      targetPort: 9377  # внутріщній порт
+```
