@@ -35,6 +35,20 @@ gcloud container node-pools create  [CLUSTER NAME] --enable-autoscaling --min-no
 ```sh
 gcloud container node-pools update  [CLUSTER NAME] --enable-autoscaling --min-nodes 15 --max-nodes 50 --zone [COMPUTE ZONE] --node-pool [POOL NAME] --project [PROJECT ID]
 ```
+temp nodes
+```sh
+gcloud container node-pools create ["POOL NAME"] \
+--cluster=[CLUSTER NAME] --zone=[COMPUTE ZONE] \
+--num-nodes "2" --node-labels=temp=true --preemptible
+```
+verify that the new nodes are ready:
+```sh
+kubectl get nodes
+```
+```sh
+kubectl get nodes -l temp=true
+```
+
 ## Deployment autoscaling
 ```sh
 kubectl autoscale deployment [DEPLOY NAME] --max 4 --min 1 --cpu-percent 1
