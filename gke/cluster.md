@@ -35,3 +35,19 @@ gcloud container node-pools create  [CLUSTER NAME] --enable-autoscaling --min-no
 ```sh
 gcloud container node-pools update  [CLUSTER NAME] --enable-autoscaling --min-nodes 15 --max-nodes 50 --zone [COMPUTE ZONE] --node-pool [POOL NAME] --project [PROJECT ID]
 ```
+## Deployment autoscaling
+```sh
+kubectl autoscale deployment [DEPLOY NAME] --max 4 --min 1 --cpu-percent 1
+```
+and inspect the configuration of `HorizontalPodAutoscaler`
+```sh
+kubectl get hpa
+```
+or describe
+```sh
+kubectl describe horizontalpodautoscaler [DEPLOY NAME]
+```
+or config yaml manifest
+```sh
+kubectl get horizontalpodautoscaler [DEPLOY NAME] -o yaml
+```
