@@ -93,3 +93,62 @@ kubectl run test-1 --labels app=other --image=alpine --restart=Never --rm --stdi
 wget -qO- --timeout=2 http://hello-web:8080
 ```
 6) Type exit and press ENTER to leave the shell.
+
+## Обмеження вихідного трафіку з Pods
+1) Create NetworkPolicy manifest file called foo-allow-to-hello.yaml:
+```sh
+nano foo-allow-to-hello.yaml
+```
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: foo-allow-to-hello
+spec:
+  policyTypes:
+  - Egress
+  podSelector:
+    matchLabels:
+      app: foo
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: hello
+  - to:
+    ports:
+    - protocol: UDP
+      port: 53
+```
+2) Create an egress policy:
+```sh
+kubectl apply -f foo-allow-to-hello.yaml
+```
+3) Verify that the policy was created:
+```sh
+kubectl get networkpolicy
+```
+
+## Валідуємо політику виходу
+1) Deploy a new web application called hello-web-2 and expose it internally in the cluster:
+```sh
+kubectl run hello-web-2 --labels app=hello-2 \
+  --image=gcr.io/google-samples/hello-app:1.0 --port 8080 --expose
+```
+2) Run a temporary Pod with the app=foo label and get a shell prompt inside the container:
+```sh
+kubectl run test-3 --labels app=foo --image=alpine --restart=Never --rm --stdin --tty
+```
+3) Verify that the Pod can establish connections to hello-web:8080:
+```sh
+wget -qO- --timeout=2 http://hello-web:8080
+```
+4) Verify that the Pod cannot establish connections to hello-web-2:8080:
+```sh
+wget -qO- --timeout=2 http://hello-web-2:8080
+```
+5) Verify that the Pod cannot establish connections to external websites, such as www.example.com:
+```sh
+wget -qO- --timeout=2 http://www.example.com
+```
+6) Type exit and press ENTER to leave the shell.
