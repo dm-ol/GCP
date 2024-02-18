@@ -1,6 +1,7 @@
 # Налаштування мережевих політик на прикладі кластера GKE
 
 ## Створюємо приватний кластер
+![cluster](1.png)
 1) On the Navigation menu (Navigation menu icon), click Kubernetes Engine > Clusters.
 2) Click Create.
 3) Name the cluster private-cluster.
