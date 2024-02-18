@@ -22,6 +22,10 @@ nano ~/.kube/config
 ```sh
 kubectl config view
 ```
+## Replica scale
+```sh
+kubectl scale deployment [NAME] --replicas 10
+```
 ## Cluster autoscaling
 ```sh
 gcloud container clusters create  [CLUSTER NAME] --enable-autoscaling --min-nodes 5 --max-nodes 20 --zone [COMPUTE ZONE] --project [PROJECT ID]
@@ -48,7 +52,11 @@ kubectl get nodes
 ```sh
 kubectl get nodes -l temp=true
 ```
-
+## Control scheduling with taints and tolerations
+You can use the temp=true label to apply this change across all the new nodes simultaneously:
+```sh
+kubectl taint node -l temp=true nodetype=preemptible:NoExecute
+```
 ## Deployment autoscaling
 ```sh
 kubectl autoscale deployment [DEPLOY NAME] --max 4 --min 1 --cpu-percent 1
