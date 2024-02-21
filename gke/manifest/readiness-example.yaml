@@ -9,13 +9,17 @@ spec:
   containers:
   - name: readiness-demo-pod
     image: nginx
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy
     ports:
     - containerPort: 80
     readinessProbe:
       exec:
         command:
         - cat
-        - /tmp/healthz
+        - /tmp//healthy
       initialDelaySeconds: 5
       periodSeconds: 5
 ---
