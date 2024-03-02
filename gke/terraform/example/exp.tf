@@ -17,7 +17,7 @@ resource "google_compute_instance" "another_instance" {
   depends_on = [google_storage_bucket.example_bucket]
 }
 resource "google_storage_bucket" "example_bucket" {
-  name     = "<UNIQUE-BUCKET-NAME>"
+  name     = "bucket-us-4""
   location = "US"
   website {
     main_page_suffix = "index.html"
