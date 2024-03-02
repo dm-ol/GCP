@@ -29,6 +29,6 @@ module "mynet-us-vm" {
 module "mynet-eu-vm" {
   source           = "./instance" # Path to local module
   instance_name    = "mynet-eu-vm"
-  instance_zone    = "Zone"
+  instance_zone    = "europe-north1-a"
   instance_network = google_compute_network.mynetwork.self_link
 }
