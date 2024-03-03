@@ -7,6 +7,7 @@ resource "google_compute_instance" "another_instance" {
       image = "debian-cloud/debian-11"
     }
   }
+
   network_interface {
     network = "default"
     access_config {
@@ -16,6 +17,7 @@ resource "google_compute_instance" "another_instance" {
   # storage bucket has been created.
   depends_on = [google_storage_bucket.example_bucket]
 }
+
 resource "google_storage_bucket" "example_bucket" {
   name     = "bucket-us-4""
   location = "US"
