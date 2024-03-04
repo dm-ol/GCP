@@ -63,23 +63,38 @@ gcloud compute firewall-rules create network-b-fw --network network-b --allow tc
 Перейдіть до мережевого пірингу VPC у хмарній консолі, перейшовши до розділу `VPC Network > VPC network peering` у лівому меню. Опинившись там:
 
 Натисніть `Create connection.`
+
 Натисніть `Continue.`
+
 Введіть `"peer-ab"` як Name для цієї сторони підключення.
+
 У розділі `Your VPC network` виберіть мережу, до якої ви хочете підключитися `(network-a)`.
+
 Установіть перемикачі для параметра `Peered VPC network` на значення `In another project`.
+
 Вставте `Project ID` другого проєкту.
+
 Введіть назву мережі `VPC network name` `(network-b)`.
+
 Натисніть кнопку `Create`.
+
 
 ### Peer network-b with network-a
 
 Перейдіть до мережевого пірингу VPC у хмарній консолі, перейшовши до розділу `VPC Network > VPC network peering` у лівому меню. Опинившись там:
 
 Натисніть `Create connection.`
+
 Натисніть `Continue.`
+
 Введіть `"peer-ba"` як Name для цієї сторони підключення.
+
 У розділі `Your VPC network` виберіть мережу, до якої ви хочете підключитися `(network-b)`.
+
 Установіть перемикачі для параметра `Peered VPC network` на значення `In another project`.
+
 Вставте `Project ID` першого проєкту.
+
 Введіть назву мережі `VPC network name` `(network-a)`.
+
 Натисніть кнопку `Create`.
