@@ -276,23 +276,23 @@ sudo cp /etc/suricata/suricata.yaml /etc/suricata/suricata.backup
 
 ```sh
 wget https://storage.googleapis.com/tech-academy-enablement/GCP-Packet-Mirroring-with-OpenSource-IDS/suricata.yaml
-```sh
+```
 
 ```sh
 wget https://storage.googleapis.com/tech-academy-enablement/GCP-Packet-Mirroring-with-OpenSource-IDS/my.rules
-```sh
+```
 
 ```sh
 sudo mkdir /etc/suricata/poc-rules
-```sh
+```
 
 ```sh
 sudo cp my.rules /etc/suricata/poc-rules/my.rules
-```sh
+```
 
 ```sh
 sudo cp suricata.yaml /etc/suricata/suricata.yaml
-```sh
+```
 
 2) Запустіть сервіс Суріката
 
