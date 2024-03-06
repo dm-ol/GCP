@@ -62,7 +62,7 @@ gcloud artifacts repositories create web-app \
 
 ## Створіть і розгорніть образи контейнерів до реєстру артефактів
 
-### Клонуємо git-репозиторій, що містить веб-додаток, і розгортаєм зображення контейнерів додатку в Artifact Registry.
+Клонуємо git-репозиторій, що містить веб-додаток, і розгортаєм зображення контейнерів додатку в Artifact Registry.
 
 1) Скопіюйте сховище з тестом до вашого домашнього каталогу:
 
@@ -146,11 +146,166 @@ gcloud beta deploy apply --file=clouddeploy-config/delivery-pipeline.yaml
 gcloud beta deploy delivery-pipelines describe web-app
 ```
 
+## Налаштуйте цілі розгортання
 
+Буде створено три об'єкти конвеєра (pipeline) доставки - по одному для кожного з кластерів GKE.
 
+1) Три кластери GKE мають бути запущені, але корисно це перевірити.
 
+```sh
+gcloud container clusters list --format="csv(name,status)"
+```
 
+Усі три кластери мають бути у стані RUNNING, як показано у виведенні нижче. Якщо вони ще не позначені як запущені, повторіть наведену вище команду, доки їхній стан не зміниться на RUNNING.
 
+2) Створіть контекст для кожного кластера
+Скористайтеся наведеними нижче командами, щоб отримати облікові дані для кожного кластера і створити простий у використанні контекст kubectl для подальшого посилання на кластери:
+
+```sh
+CONTEXTS=("test" "staging" "prod")
+for CONTEXT in ${CONTEXTS[@]}
+do
+    gcloud container clusters get-credentials ${CONTEXT} --region ${REGION}
+    kubectl config rename-context gke_${PROJECT_ID}_${REGION}_${CONTEXT} ${CONTEXT}
+done
+
+```
+
+3) Створення простору імен у кожному кластері
+Скористайтеся наведеними нижче командами, щоб створити простір імен Kubernetes (веб-додаток) у кожному з трьох кластерів:
+
+```sh
+for CONTEXT in ${CONTEXTS[@]}
+do
+    kubectl --context ${CONTEXT} apply -f kubernetes-config/web-app-namespace.yaml
+done
+```
+
+4) Створіть цілі конвеєра (pipeline) доставки
+Надайте визначення для кожної з цілей:
+
+```sh
+for CONTEXT in ${CONTEXTS[@]}
+do
+    envsubst < clouddeploy-config/target-$CONTEXT.yaml.template > clouddeploy-config/target-$CONTEXT.yaml
+    gcloud beta deploy apply --file clouddeploy-config/target-$CONTEXT.yaml
+done
+```
+
+5) Відобразити деталі для тестової цілі:
+
+```sh
+cat clouddeploy-config/target-test.yaml
+```
+
+6) Відобразити деталі для прод-таргету:
+
+```sh
+cat clouddeploy-config/target-prod.yaml
+```
+
+7) Переконайтеся, що три цілі (test, staging, prod) створено:
+
+```sh
+gcloud beta deploy targets list
+```
+
+## Створіть реліз
+
+Випуск Google Cloud Deploy - це конкретна версія одного або декількох зображень контейнера, пов'язана з певним конвеєром доставки. Після створення релізу його можна просувати через кілька цілей (послідовність просування). Крім того, при створенні релізу ваш додаток рендерить за допомогою скафолду і зберігає результат як посилання на точку в часі, яке використовується протягом усього терміну дії цього релізу.
+Оскільки це перший реліз вашого додатку, ви назвете його web-app-001.
+
+1) Запустіть наступну команду, щоб створити реліз:
+
+```sh
+gcloud beta deploy releases create web-app-001 \
+--delivery-pipeline web-app \
+--build-artifacts web/artifacts.json \
+--source web/
+```
+
+Параметр --build-artifacts посилається на файл artifacts.json, створений skaffold раніше. Параметр --source посилається на директорію з вихідним кодом програми, де знаходиться skaffold.yaml.
+Після створення релізу він також буде автоматично розгорнутий до першої цілі у конвеєрі (якщо не потрібне схвалення, яке буде розглянуто у наступному кроці цієї лабораторної роботи).
+
+2) Щоб переконатися, що на тестовому об'єкті розгорнуто вашу програму, виконайте наступну команду:
+
+```sh
+gcloud beta deploy rollouts list \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+3) Переконайтеся, що ваш додаток було розгорнуто на тестовому кластері GKE, виконавши наступні команди:
+
+```sh
+kubectx test
+kubectl get all -n web-app
+```
+
+## Просування заявки на стадіювання
+
+Будемо просувати додаток з тестової версії до цільової.
+
+1) Просувайте заявку до staging:
+
+```sh
+gcloud beta deploy releases promote \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+Натисніть ENTER, щоб прийняти значення за замовчуванням (Y = так).
+
+2) Щоб переконатися, що на staging цілі розгорнуто вашу програму, виконайте наступну команду:
+
+```sh
+gcloud beta deploy rollouts list \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+## Просувайте заявку на прод
+
+1) Просувайте заявку до prod:
+
+```sh
+gcloud beta deploy releases promote \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+Натисніть ENTER, щоб прийняти значення за замовчуванням (Y = так).
+
+2) Щоб переконатися, що на prod цілі розгорнуто вашу програму, виконайте наступну команду:
+
+```sh
+gcloud beta deploy rollouts list \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+3) Схвалити розгортання з урахуванням наступного:
+
+```sh
+gcloud beta deploy rollouts approve web-app-001-to-prod-0001 \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+4) Щоб переконатися, що на цільовому об'єкті розгорнуто вашу програму, виконайте наступну команду:
+
+```sh
+gcloud beta deploy rollouts list \
+--delivery-pipeline web-app \
+--release web-app-001
+```
+
+5) Переконайтеся, що ваш додаток було розгорнуто на prod кластері GKE, виконавши наступні команди:
+
+```sh
+kubectx prod
+kubectl get all -n web-app
+```
 
 
 
