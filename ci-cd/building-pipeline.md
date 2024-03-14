@@ -49,7 +49,9 @@ if __name__ == "__main__":
 
 2) Також створимо нову директорію `templates` і декілька файлів html в ній:
 
-```layout.html
+Спочатку `layout.html`
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -68,8 +70,9 @@ if __name__ == "__main__":
 </body>
 </html>
 ```
+Далі `index.html`
 
-```index.html
+```html
 {% extends "layout.html" %}
 {% block content %}
 <div class="jumbotron">
@@ -82,7 +85,7 @@ if __name__ == "__main__":
 
 3) У папці devops-repo (не в папці templates) створіть новий файл і додайте до нього наступне та збережіть його під назвою requirements.txt
 
-```requirements.txt
+```txt
 Flask>=2.0.3
 ```
 
